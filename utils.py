@@ -4,23 +4,20 @@ Created on Sat Mar 28 20:17:23 2026
 
 @author: pathouli
 """
-
 # 导入正则表达式模块（用于文本清洗）
 import re
-
 def clean_txt(str_in):
     """
     清洗文本函数：移除特殊字符，只保留字母、空格和撇号，并转换为小写
-    
     参数:
         str_in (str): 输入的原始文本字符串
-    
     返回:
         str: 清洗后的文本（小写，只包含字母和空格）
     """
     # 使用正则表达式替换所有非字母和非撇号的字符为空格，然后去除首尾空格并转小写
     cln_txt = re.sub("[^A-Za-z']+", " ", str_in).strip().lower()
     return cln_txt
+
 
 def file_opener(p_in, f_n):
     """
@@ -36,13 +33,19 @@ def file_opener(p_in, f_n):
     try:
         l_t = ""  # 初始化变量用于存储文件内容
         # 以只读模式打开文件，编码为 UTF-8
-        f = open(p_in + f_n, "r", encoding="UTF8")
-        # 读取文件全部内容
-        l_t = f.read()
-        # 关闭文件
-        f.close()
+        # f = open(p_in + f_n, "r", encoding="UTF8")
+        # # 读取文件全部内容
+        # l_t = f.read()
+        # # 关闭文件
+        # f.close()
+
+        with open(p_in + f_n, 'r', encoding='UTF8') as f:
+            l_t = f.read()
         # 使用 clean_txt 函数清洗文本内容
         l_t = clean_txt(l_t)
+
+
+
     except Exception as e:
         # 如果文件打开失败，打印错误信息
         print ("Can't open", p_in + f_n)
@@ -102,23 +105,13 @@ def word_freq_redux(c_in):
     # 导入 collections 模块（用于计数）
     import collections
     # 使用 Counter 统计单词频率，并转换为字典
+    print(c_in.split(),type(c_in.split()))
     wrd_frequency_ctr = dict(
         collections.Counter(c_in.split()))
+    print(wrd_frequency_ctr,type(wrd_frequency_ctr))
     return wrd_frequency_ctr
 
 def all_dictionary(df_in, col_n):
-    """
-    全量字典函数：为整个数据集和每个类别分别创建词频字典
-    
-    参数:
-        df_in (pandas.DataFrame): 输入的数据框，必须包含 'label' 列
-        col_n (str): 要统计词频的列名
-    
-    返回:
-        dict: 包含多个词频字典的字典
-            - 'all' 键：整个数据集的词频字典
-            - 每个唯一 label 键：对应类别的词频字典
-    """
     # 初始化空字典用于存储结果
     m_dict = dict()
     # 使用 pandas 的 str.cat 方法将指定列的所有文本连接成一个大字符串（用空格分隔）
